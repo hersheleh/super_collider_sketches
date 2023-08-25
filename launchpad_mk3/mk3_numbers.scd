@@ -5,8 +5,8 @@ load("mk3_functions.scd".resolveRelative);
 
 )
 (
-MIDIClient.disposeClient;
 ~mk3_setup_midi.();
+MIDIFunc.trace(false);
 )
 (
 // 3x5 display represented as a 16 bit binary digit
@@ -54,13 +54,96 @@ MIDIClient.disposeClient;
 			display_index = display_index + 1;
 		}
 	}
+};
+
+~mk3_make_button = {
+	arg name, index, color, press_color;
+	var name_on, name_off, on, off;
+	name_on = (name++\_on).asSymbol;
+	name_off = (name++\off).asSymbol;
+	[name_on, name_off].postln;
+	// MIDIdef(name_on).free;
+	// MIDIdef(name_off).free;
+	~mk3_light_led.(
+		~mk3_colorspec.(\rgb, index, rgb: color),
+		~mk3_midi
+	);
+	on = MIDIdef.noteOn(name_on, {
+		var val, num, chan, src;
+		[val, num, chan, src].postln;
+		~mk3_light_led.(
+			~mk3_colorspec.(\rgb, index, rgb: press_color),
+			~mk3_midi;
+		);
+		~increment_number.(index: index);
+	}, noteNum: index);
+	off = MIDIdef.noteOff(name_off, {
+		var val, num, chan, src;
+		[val, num, chan, src].postln;
+		~mk3_light_led.(
+			~mk3_colorspec.(\rgb, index, rgb: color),
+			~mk3_midi;
+		);
+	});
+	MIDIdef(name_on).enable;
+	MIDIdef(name_off).enable;
+	[on, off];
+};
+
+~mk3_clear = {(0..128).do({arg n; ~mk3_midi.noteOff(0, n, 0)})};
+)
+
+
+(
+~mk3_set_layout.(\prog, ~mk3_midi);
+
+~mk3_make_button.(\inc, 67, [127,0,0], [0,0,127]);
+
+)
+
+(
+~white = [127, 90,   0];
+~green = [  0, 50,   0];
+~red   = [ 50,  0,   0];
+~black = [ 30,  0, 127];
+~blue  = [  0,  0,  90];
+~press_color = [127, 127, 127];
+
+~magic_life_counter = {
+	arg index, start_life;
+	var starting_life = 40;
+	// Display Starting Life
+	~mk3_clear.();
+	~display_number.(4, 71, ~red);
+	~display_number.(0, 76, ~red);
+	// Choose the color of mana
+	~mk3_make_button.(\white, 69, ~white, ~press_color);
+	~mk3_make_button.(\green, 59, ~green, ~press_color);
+	~mk3_make_button.(\red,   49, ~red  , ~press_color);
+	~mk3_make_button.(\black, 39, ~black, ~press_color);
+	~mk3_make_button.(\blue,  29, ~blue , ~press_color);
+
+	~mk3_make_button.(\white, 68, ~white, ~press_color);
+	~mk3_make_button.(\green, 58, ~green, ~press_color);
+	~mk3_make_button.(\red,   48, ~red  , ~press_color);
+	~mk3_make_button.(\black, 38, ~black, ~press_color);
+	~mk3_make_button.(\blue,  28, ~blue , ~press_color);
+
 }
+
 )
 
 (
-~mk3_set_mode.(\prog, ~mk3_midi);
-)
-
-(
-~mk3_set_mode.(\prog, ~mk3_midi);
+~display_number.(4, 65, [127, 0, 0]);
+~display_number.(3, 62, [0, 0, 0]);
+~display_number.(3, 65, [0, 0, 0]);
+~display_number.(1, 65, [0, 50, 0]);
+~display_number.(0, 65, [0, 0, 127]);
+~display_number.(0, 65, [50, 0, 50]);
+~display_number.(9, 67, [127, 0, 127]);
+~display_number.(9, 67, [0, 0, 0]);
+~display_number.(0, 67, [0, 0, 0]);
+~display_number.(3, 61, [0, 127, 127]);
+~display_number.(3, 65, [0, 127, 127]);
+~display_number.(3, 65, [0, 127, 127]);
 )

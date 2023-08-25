@@ -1,18 +1,20 @@
 // Library of Functions to send sysex MIDI messages to Launchpad Mini MK3
 (
 ~mk3_setup_midi = {
+	var mk3_device_name, mk3_daw_port_name, mk3_midi_port_name;
+	var mk3_daw_port, mk3_midi_port;
 	MIDIClient.init;
 	MIDIIn.connectAll();
 
 	MIDIFunc.trace(true);
 
 	// Launchpad MK3 device and port names
-	var mk3_device_name = "Launchpad Mini MK3";
-	var mk3_daw_port_name = "Launchpad Mini MK3 LPMiniMK3 DA";
-	var mk3_midi_port_name = "Launchpad Mini MK3 LPMiniMK3 MI";
+	mk3_device_name = "Launchpad Mini MK3";
+	mk3_daw_port_name = "Launchpad Mini MK3 LPMiniMK3 DA";
+	mk3_midi_port_name = "Launchpad Mini MK3 LPMiniMK3 MI";
 
-	var mk3_daw_port = MIDIOut.findPort(mk3_device_name, mk3_daw_port_name);
-	var mk3_midi_port = MIDIOut.findPort(mk3_device_name, mk3_midi_port_name);
+	mk3_daw_port = MIDIOut.findPort(mk3_device_name, mk3_daw_port_name);
+	mk3_midi_port = MIDIOut.findPort(mk3_device_name, mk3_midi_port_name);
 
 	// Connect SC to Launchpad MK3s midi and daw ports
 	~mk3_daw = MIDIOut(0);
@@ -29,6 +31,7 @@
 	var suffix = [0xf7];
 	Int8Array.newFrom(header ++ payload ++ suffix);
 };
+
 
 ~mk3_cmd = {
 	arg command;
