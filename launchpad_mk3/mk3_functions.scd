@@ -1,21 +1,23 @@
 // Library of Functions to send sysex MIDI messages to Launchpad Mini MK3
 (
 ~mk3_setup_midi = {
-	var mk3_device_name, mk3_daw_port_name, mk3_midi_port_name;
-	var mk3_daw_port, mk3_midi_port;
-	MIDIClient.init;
-	MIDIIn.connectAll();
-
-	MIDIFunc.trace(true);
-
 	// Launchpad MK3 device and port names
+	var mk3_device_name, mk3_daw_port_name, mk3_midi_port_name;
+	var mk3_daw_port, mk3_midi_port, mk3_midi_in_port;
+
 	mk3_device_name = "Launchpad Mini MK3";
 	mk3_daw_port_name = "Launchpad Mini MK3 LPMiniMK3 DA";
 	mk3_midi_port_name = "Launchpad Mini MK3 LPMiniMK3 MI";
 
+	MIDIClient.init;
+
+	mk3_midi_in_port = MIDIIn.findPort(mk3_device_name, mk3_midi_port_name);
+
+	MIDIIn.connect(0,  mk3_midi_in_port);
+
 	mk3_daw_port = MIDIOut.findPort(mk3_device_name, mk3_daw_port_name);
 	mk3_midi_port = MIDIOut.findPort(mk3_device_name, mk3_midi_port_name);
-
+	// [mk3_daw_port ,	mk3_midi_port];
 	// Connect SC to Launchpad MK3s midi and daw ports
 	~mk3_daw = MIDIOut(0);
 	~mk3_midi = MIDIOut(1);
@@ -60,7 +62,7 @@
 		daw: [0x10, 0x01],
 	);
 	var payload = ~build_mk3_sysex.(modes.at(mode));
-	payload.postln;
+	// payload.postln;
 	midi_dev.sysex(payload);
 };
 
@@ -76,7 +78,7 @@
 	);
 	var command = 0x00;
 	var	payload = ~build_mk3_sysex.([command, layouts.at(layout)]);
-	payload.postln;
+	// payload.postln;
 	midi_dev.sysex(payload);
 };
 
@@ -126,11 +128,11 @@
 ~mk3_light_led = {
 	arg colorspec, midi_dev;
 	var payload, command = 0x03;
-	colorspec.postln;
+	// colorspec.postln;
 	payload = ~build_mk3_sysex.(
 		[command] ++ colorspec;
 	);
-	payload.postln;
+	// payload.postln;
 	midi_dev.sysex(payload);
 };
 
@@ -142,7 +144,7 @@
 		for (1, 8) {
 			arg j;
 			var note = i+j;
-			note.postln;
+			// note.postln;
 			d.noteOff(chan, note, color);
 			color = color + 1;
 		}
