@@ -20,12 +20,15 @@
 {Saw.ar(100)*[1,1];}.play
 
 
-(SynthDef.new(\harmonic,
-{
-	arg freq, part;
+
+(
+SynthDef.new(\harmonic, {
 	var sig, mul = 1;
-	sig = SinOsc.ar(100*part, mul: 1/part)!2;
-	sig = sig + WhiteNoise.ar(1.0, 0.0);
+	sig = SinOsc.ar(
+		freq: \freq.kr(100)*\part.kr(1),
+		mul: 0.1*1/\part.kr(1)
+	)!2;
+
 	Out.ar(0, sig);
 }).add;)
 
@@ -33,11 +36,17 @@
 
 
 (
-(1..5).do( {
+(1..20).do(
+{
 	arg value;
-	SynthDef.new(
+	Synth.new(
 		\harmonic,
-		[\freq, 100, \part, value.postln]
-	)
+		[\freq, 400, \part, value]
+	);
 });
 )
+
+s.plotTree;
+s.meter;
+s.freqscope;
+s.scope;
