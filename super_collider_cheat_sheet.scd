@@ -22,6 +22,7 @@ num+1;
 )
 
 
+
 // func is the reciever value is the message
 // SuperCollider is made of objects passing messages to each other
 ~func.value(2);
@@ -46,15 +47,18 @@ s.quit;
 	arg f1, f2;
 	var sig;
 	sig = SinOsc.ar(f1, 0, 0.1, 0);//+SinOsc.ar(f2, 0, 0.1, 0);
+    
 	sig = sig!2;
+    SinOsc.ar(f1)
 }
 )
 
 ~mysound.isKindOf(AbstractFunction);
 (
-x = ~mysound.play(args:[\f1, 500, \f2, 200]);p
-
+x = ~mysound.play(args:[\f1, 500, \f2, 200]);
 )
+
+
 (
 x.set(\f1, 220);
 x.set(\f2, 680);

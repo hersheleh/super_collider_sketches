@@ -13,21 +13,24 @@
 		}
 	);
 	sig!2;
-}.play
+}.play;
 )
+//Saw.ar(100)*
 
 {Saw.ar(100)*[1,1];}.play
 
 
-(
-SynthDef.new(\harmonic, {
+(SynthDef.new(\harmonic,
+{
 	arg freq, part;
 	var sig, mul = 1;
 	sig = SinOsc.ar(100*part, mul: 1/part)!2;
+	sig = sig + WhiteNoise.ar(1.0, 0.0);
 	Out.ar(0, sig);
-}
-).add;
-)
+}).add;)
+
+ s.volume.gui;
+
 
 (
 (1..5).do( {
